@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,14 +24,14 @@ namespace DronesApi.Controllers
 
         //Metodo get que recibe un parametro 
         [HttpGet("{id}")]
-        public IActionResult Get(string id_Drone)
+        public IActionResult Get(string id)
         {
-            var dron = DronesCargados_list.lis_drones_cargados.Find(p => p.IdDrone == id_Drone);
+            var dron = DronesCargados_list.lis_drones_cargados.Find(p => p.IdDrone == id);
             if(dron == null)
             {
                 return BadRequest("El id del dron es incorrecto");
             }
-            int carga = Calcular_Carga(id_Drone);
+            int carga = Calcular_Carga(id);
             return Ok(new Drones_Cargados { IdDrone = dron.IdDrone,Cantidad=carga });
         }
 
@@ -47,20 +47,20 @@ namespace DronesApi.Controllers
 
 
         //Metodo que define los comportamientos establecidos para la inserccion de un nuevo elemento
-        private void requisitos(Drones_Cargados nuevo_dron)
+        private IActionResult requisitos(Drones_Cargados nuevo_dron)
         {
             var drone = DronesList.lis_dron.Find(p => p.numero_serie == nuevo_dron.IdDrone);
             var medicamento = MedicamentosList.lis_medicamentos.Find(p => p.Nombre == nuevo_dron.MedicamentosId);
 
             if (drone == null || medicamento == null)
             {
-                throw new Exception($"El medicamento {nuevo_dron.MedicamentosId} o el dron {nuevo_dron.IdDrone} no existen");
+                return BadRequest($"El medicamento {nuevo_dron.MedicamentosId} o el dron {nuevo_dron.IdDrone} no existen");
             }
 
             int carga = Calcular_Carga(nuevo_dron.IdDrone);
             if (carga+nuevo_dron.Cantidad>drone.peso_limite)
             {
-                throw new Exception($"El Dron no soporta el peso de la carga");
+                return BadRequest($"El Dron no soporta el peso de la carga");
             }
 
             //comprobar si al cargar el dron este tiene aun capacidad
@@ -69,7 +69,8 @@ namespace DronesApi.Controllers
                var index = DronesList.lis_dron.FindIndex(p => p.numero_serie == nuevo_dron.IdDrone);
                 DronesList.lis_dron[index].estado = "Entregando Carga";
             }
-            
+
+            return Ok("");
 
 
         }
@@ -78,7 +79,7 @@ namespace DronesApi.Controllers
         private List<Dron> Drones_Disponbles()
         {
             var drones = from drone in DronesList.lis_dron
-                         where drone.estado == "Cargado"
+                         where drone.estado == "cargado" || drone.estado == "Cargado"
                          select (new Dron { numero_serie = drone.numero_serie, estado = drone.estado, Capacidad_Bateria = drone.Capacidad_Bateria, peso = drone.peso, peso_limite = drone.peso_limite });
 
             return drones.ToList();

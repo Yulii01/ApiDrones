@@ -7,7 +7,7 @@ namespace DronesApi.Models
 {
     public class Drones_Cargados
     {
-        public int id { get; set; }
+       
         public string IdDrone { get; set; }
        
         public string MedicamentosId { get; set; }

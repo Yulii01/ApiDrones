@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,21 +35,23 @@ namespace DronesApi.Controllers
         }
 
       
-        private void requisitos(Dron nuevo_dron)
+        private IActionResult requisitos(Dron nuevo_dron)
         {
             if(!(DronesList.lis_dron.Find(p=> p.numero_serie== nuevo_dron.numero_serie)==null))
             {
-                throw new Exception($"El nuemro de serie {nuevo_dron.numero_serie} coincide con otro ya inscrito");
+              return BadRequest($"El nuemro de serie {nuevo_dron.numero_serie} coincide con otro ya inscrito");
 
             }
             if (nuevo_dron.numero_serie.Length>100 || nuevo_dron.peso_limite>500)
             {
-                throw new Exception($"El nuemro de serie {nuevo_dron.numero_serie} o el peso maximo del dron {nuevo_dron.peso_limite} son superior a lo permitido");
+                return BadRequest($"El nuemro de serie {nuevo_dron.numero_serie} o el peso maximo del dron {nuevo_dron.peso_limite} son superior a lo permitido");
             }
             if(nuevo_dron.Capacidad_Bateria<25)
             {
                 nuevo_dron.estado = "Cargando";
             }
+
+            return Ok("");
         }
 
        

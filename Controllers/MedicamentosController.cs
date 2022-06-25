@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,11 +30,11 @@ namespace DronesApi.Controllers
         }
 
 
-        private bool requisito(Medicamentos nuevo_medicamento)
+        private IActionResult requisito(Medicamentos nuevo_medicamento)
         {
             if (!(MedicamentosList.lis_medicamentos.Find(p => p.Codigo == nuevo_medicamento.Codigo) == null))
             {
-                throw new Exception($"El Codigo del medicamento {nuevo_medicamento.Codigo} coincide con otro ya inscrito");
+                return BadRequest($"El Codigo del medicamento {nuevo_medicamento.Codigo} coincide con otro ya inscrito");
 
             }
             for (int i = 0; i < nuevo_medicamento.Nombre.Length; i++)
@@ -42,7 +42,7 @@ namespace DronesApi.Controllers
                 if(!char.IsLetterOrDigit (nuevo_medicamento.Nombre[i]))
                 {
                     if (!(nuevo_medicamento.Nombre[i] == '-' || nuevo_medicamento.Nombre[i] == '_'))
-                    { throw new Exception($"Nombre del medicamento {nuevo_medicamento.Nombre} no permitido"); }
+                    { return BadRequest($"Nombre del medicamento {nuevo_medicamento.Nombre} no permitido"); }
                 }
             }
 
@@ -50,11 +50,11 @@ namespace DronesApi.Controllers
             {
                 if (!(char.IsDigit(nuevo_medicamento.Codigo[i]) || char.IsUpper(nuevo_medicamento.Codigo[i]) || nuevo_medicamento.Codigo[i] == '-' || nuevo_medicamento.Codigo[i] == '_'))
                 {
-                     throw new Exception($"Codigo del medicamento {nuevo_medicamento.Codigo} no permitido"); 
+                    return BadRequest($"Codigo del medicamento {nuevo_medicamento.Codigo} no permitido"); 
                 }
             }
 
-            return true;
+            return Ok("");
         }
 
     }
